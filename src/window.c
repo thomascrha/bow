@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 
+#include "gio/gio.h"
 #include "gtk4-layer-shell.h"
 #include "log.h"
 
@@ -87,7 +88,7 @@ static void bow_render_window(GtkApplication *app, gpointer _data) {
 
     bow_log_debug("window_timeout: %d", data->window_timeout);
     g_timeout_add(data->window_timeout, (GSourceFunc)gtk_window_close, gtk_window);
-    g_object_unref(label);
+    // gtk_widget_unparent(label);
     g_object_unref(gtk_window);
 }
 
@@ -95,7 +96,7 @@ int bow_create_run_window(char *expression, int window_timeout) {
     bow_log_debug("bow_create_run_window() called");
 
     // TODO make this a #define global variable in config.h
-    GtkApplication *app = gtk_application_new("com.github.thomascrha.bow", G_APPLICATION_FLAGS_NONE);
+    GtkApplication *app = gtk_application_new("com.github.thomascrha.bow", G_APPLICATION_DEFAULT_FLAGS);
 
     gpointer data = g_new(struct data, 1);
     ((struct data *)data)->expression = expression;
