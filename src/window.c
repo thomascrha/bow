@@ -121,8 +121,13 @@ static void bow_render_image_window(GtkApplication *app, gpointer bow_config) {
     gtk_window_set_child(gtk_window, image);
     gtk_window_present(gtk_window);
 
+    static gboolean close_window(gpointer window) {
+        gtk_window_close(GTK_WINDOW(window));
+        return G_SOURCE_REMOVE;
+    }
+
     bow_log_debug("window_timeout: %d", ((struct bow_config *)bow_config)->window_timeout);
-    g_timeout_add(((struct bow_config *)bow_config)->window_timeout, (GSourceFunc)gtk_window_close, gtk_window);
+    g_timeout_add(((struct bow_config *)bow_config)->window_timeout, close_window, gtk_window);
     gtk_window_present(gtk_window);
 
     g_signal_connect(gtk_window, "destroy", G_CALLBACK(gtk_window_close), NULL);
@@ -150,7 +155,7 @@ static void bow_render_text_window(GtkApplication *app, gpointer bow_config) {
     gtk_window_set_child(gtk_window, label);
 
     bow_log_debug("window_timeout: %d", ((struct bow_config *)bow_config)->window_timeout);
-    g_timeout_add(((struct bow_config *)bow_config)->window_timeout, (GSourceFunc)gtk_window_close, gtk_window);
+    g_timeout_add(((struct bow_config *)bow_config)->window_timeout, close_window, gtk_window);
     gtk_window_present(gtk_window);
 
     g_signal_connect(gtk_window, "destroy", G_CALLBACK(gtk_window_close), NULL);
